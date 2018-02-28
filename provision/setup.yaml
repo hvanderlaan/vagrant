@@ -1,0 +1,55 @@
+---
+# file   : provision/setup.yaml
+# purpose: provisioning the vagrant server
+#
+# author : harald van der laan
+# date   : 2018/02/28
+# version: v1.0.1
+
+- hosts: all
+  become: true
+  gather_facts: false
+
+  pre_tasks:
+      - name: (pre tasks) install provisioning requirements if needed
+        raw: bash -c "test -e /usr/bin/python || (apt-get update && apt-get --yes install python-minimal)"
+        changed_when: false
+
+      - name: (pre tasks) create ansible local facts directory
+        file:
+            path: /etc/ansible/facts.d
+            state: directory
+        register: factsdir
+
+      - name: (pre tasks) verify ansible local facts file
+        stat:
+            path: /etc/ansible/facts.d/managed.fact
+        register: factsfile
+
+      - name: (pre tasks) create ansible local facts file
+        file:
+            path: /etc/ansible/facts.d/managed.fact
+            state: touch
+        when: factsdir.changed or factsfile.stat.exists == false
+
+  tasks:
+      - name: (ansible) include vars.yaml
+        include_vars: vars.yaml
+
+      - name: (ansible) gather facts
+        setup:
+
+      - name: (bootstrap) bootstrapping server when server is not managed by ansible
+        include_tasks: bootstrap.yaml
+        when: ansible_local.managed.ansible is not defined
+
+      - name: (ansible) gather facts
+        setup:
+
+      - name: (users) configurating user accounts when users are not managed by ansible
+        include_tasks: users.yaml
+        when: ansible_local.managed.ansible.user is not defined and ansible_local.managed.ansible.managed == "true"
+
+      - name: (custom) running custom tasks when server is managed by ansible
+        include_tasks: custom.yaml
+        when: ansible_local.managed.ansible.managed == "true"

@@ -1,0 +1,13 @@
+---
+# file   : provision/custom.yaml
+# purpose: configure user custom playbook to server
+#
+# author : harald van der laan
+# date   : 2018/02/28
+# version: v1.0.0
+#
+# Edit below this line
+
+- name: (custom) show debug message
+  debug:
+      msg: "from here and down there is no support ;)"

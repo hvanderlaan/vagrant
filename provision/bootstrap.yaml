@@ -1,0 +1,65 @@
+---
+# file   : provision/bootstrap.yaml
+# purpose: bootstrapping new vagrant server
+#
+# author : harald van der laan
+# date   : 2018/02/28
+# version: v1.0.1
+
+- name: (bootstrap) deploy ansible local facts file
+  template:
+      src: etc/ansible/facts.d/managed.fact.j2
+      dest: /etc/ansible/facts.d/managed.fact
+      mode: 0644
+      owner: root
+      group: root
+
+- name: (bootstrap) upgrade ubuntu to latest patch level
+  apt:
+      update_cache: true
+      cache_valid_time: 86400
+      upgrade: dist
+
+- name: (bootstrap) installing default tools
+  apt:
+      name: "{{ item }}"
+      state: present
+  with_items:
+      - python-pip
+      - git
+      - zsh
+
+- name: (bootstrap) upgrade pip
+  pip:
+      name: pip
+      state: latest
+
+- name: (bootstrap) remove default dynamic motd
+  file:
+      path: /etc/update-motd.d/
+      state: absent
+
+- name: (bootstrap) deploy ansible managed motd
+  template:
+      src: etc/motd.j2
+      dest: /etc/motd
+      force: yes
+      owner: root
+      group: root
+      mode: 0644
+
+- name: (bootstrap) preform reboot test before continueing ansible run
+  shell: sleep 2 && shutdown -r now "Ansible reboot"
+  async: 1
+  poll: 0
+  ignore_errors: true
+
+- name: (bootstrap) waiting for server to boot
+  become: false
+  local_action: wait_for
+  args:
+      host: "{{ vagrant.ip }}"
+      port: 22
+      state: started
+      delay: 90
+      timeout: 180

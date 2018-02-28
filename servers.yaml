@@ -1,0 +1,18 @@
+---
+# file   : cluster.yaml
+# purpose: variable file for vagrant to deploy a multi vm environment
+#
+# author : harald van der laan
+# date   : 2018/02/23
+# version: v1.0.0
+
+- name: devdoos
+  hostname: devdoos.local.brakkedoos.nl
+  box: ubuntu/xenial64
+  ram: 512
+  cpus: 1
+  ip: 172.16.20.221
+  group: /servers
+  vrde: "on"
+  vrdeport: 5221
+  playbook: provision/setup.yaml

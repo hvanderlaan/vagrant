@@ -1,0 +1,14 @@
+---
+# file   : provision/vars.yaml
+# purpose: provide vars to ansible
+#
+# author : harald van der laan
+# date   : 2018/02/28
+# version: v1.0.0
+
+sudoer:
+    name: "somename"
+    fullname: "Some full name"
+
+vagrant:
+    ip: "ipaddress of private_network (servers.yaml)"
