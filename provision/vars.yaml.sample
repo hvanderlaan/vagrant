@@ -4,9 +4,9 @@
 #
 # author : harald van der laan
 # date   : 2018/02/28
-# version: v1.0.0
+# version: v1.0.1
 
-sudoer:
+user:
     name: "somename"
     fullname: "Some full name"
 
