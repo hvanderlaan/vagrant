@@ -1,6 +1,12 @@
 # vagrant
 Template set for deploying a ubuntu server and configure it with ansible
 
+## requirements
+    - vagrant
+    - virtualbox
+    - virtualbox extention pack
+    - ansible 2.x
+
 ## Usage
 ```bash
 cd provision
