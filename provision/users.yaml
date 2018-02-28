@@ -4,21 +4,21 @@
 #
 # author : harald van der laan
 # date   : 2018/02/28
-# version: v1.0.0
+# version: v1.0.1
 
 - name: (users) create local user
   user:
-      name: "{{ sudoer.name }}"
-      comment: "{{ sudoer.fullname }}"
+      name: "{{ user.name }}"
+      comment: "{{ user.fullname }}"
       uid: 1100
       shell: /usr/bin/zsh
-      home: "/home/{{ sudoer.name }}"
+      home: "/home/{{ user.name }}"
       state: present
 
-- name: (users) deploy sudoers file for local user
+- name: (users) deploy users file for local user
   template:
       src: etc/sudoers.d/sudofile.j2
-      dest: "/etc/sudoers.d/10-{{ sudoer.name }}"
+      dest: "/etc/sudoers.d/10-{{ user.name }}"
       mode: 0440
       owner: root
       group: root
@@ -27,32 +27,32 @@
 
 - name: (users) create .ssh directory for local user
   file:
-      path: "/home/{{ sudoer.name }}/.ssh"
+      path: "/home/{{ user.name }}/.ssh"
       state: directory
-      owner: "{{ sudoer.name }}"
-      group: "{{ sudoer.name }}"
+      owner: "{{ user.name }}"
+      group: "{{ user.name }}"
       mode: 0700
 
 - name: (users) deploy public key for local user
   copy:
       src: public.rsa.key
-      dest: "/home/{{ sudoer.name }}/.ssh/authorized_keys"
+      dest: "/home/{{ user.name }}/.ssh/authorized_keys"
       mode: 0600
-      owner: "{{ sudoer.name }}"
-      group: "{{ sudoer.name }}"
+      owner: "{{ user.name }}"
+      group: "{{ user.name }}"
 
 - name: (users) download zsh dotfiles for local user
   git:
       repo: 'https://github.com/hvanderlaan/dotfiles.git'
-      dest: "/home/{{ sudoer.name }}/.zsh_dotfiles"
+      dest: "/home/{{ user.name }}/.zsh_dotfiles"
 
 - name: (users) installing zsh dotfiles dor local user
   copy:
       remote_src: yes
-      src: "/home/{{ sudoer.name }}/.zsh_dotfiles/{{ item }}"
-      dest: "/home/{{ sudoer.name }}/{{ item }}"
-      owner: "{{ sudoer.name }}"
-      group: "{{ sudoer.name }}"
+      src: "/home/{{ user.name }}/.zsh_dotfiles/{{ item }}"
+      dest: "/home/{{ user.name }}/{{ item }}"
+      owner: "{{ user.name }}"
+      group: "{{ user.name }}"
   with_items:
       - .zaliasses
       - .zcolors
@@ -64,18 +64,18 @@
 - name: (users) download vim dotfiles for local user
   git:
       repo: 'https://github.com/amix/vimrc'
-      dest: "/home/{{ sudoer.name }}/.vim_runtime"
+      dest: "/home/{{ user.name }}/.vim_runtime"
 
 - name: (users) installing vim ditfiles for local user
   file:
-      path: "/home/{{ sudoer.name }}/.vim_runtime"
-      owner: "{{ sudoer.name }}"
-      group: "{{ sudoer.name }}"
+      path: "/home/{{ user.name }}/.vim_runtime"
+      owner: "{{ user.name }}"
+      group: "{{ user.name }}"
       state: directory
 
 - name: (users) clean up not needed files for local user
   file:
-      path: "/home/{{ sudoer.name }}/.zsh_dotfiles"
+      path: "/home/{{ user.name }}/.zsh_dotfiles"
       state: absent
 
 - name: (users) update local ansible facts
