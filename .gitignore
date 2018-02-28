@@ -1,4 +1,5 @@
 ubuntu-xenial-16.04-cloudimg-console.log
 .vagrant
 provision/vars.yaml
+provision/*.retry
 provision/files/public.rsa.key
