@@ -14,11 +14,11 @@ VAGRANT_API_FILE_VERSION = "2"
 
 # loading cluster configuration
 require 'yaml'
-servers = YAML.load_file('servers.yaml')
+server = YAML.load_file('server.yaml')
 
 # main vagrant configuration
 Vagrant.configure(VAGRANT_API_FILE_VERSION) do |config|
-    servers.each do |node|
+    server.each do |node|
         config.vm.define node['name'] do |nodecfg|
             nodecfg.vm.box = node['box']
             nodecfg.vm.hostname = node['hostname']
