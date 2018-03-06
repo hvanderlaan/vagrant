@@ -47,3 +47,9 @@
       update_cache: true
       name: docker-ce
       state: present
+
+- name: (custom - docker) add local user in docker group
+  user:
+      name: "{{ user.name }}"
+      groups: docker
+      append: yes
