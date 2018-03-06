@@ -3,11 +3,47 @@
 # purpose: configure user custom playbook to server
 #
 # author : harald van der laan
-# date   : 2018/02/28
-# version: v1.0.0
+# date   : 2018/03/06
+# version: v1.0.1
 #
 # Edit below this line
 
 - name: (custom) show debug message
   debug:
       msg: "from here and down there is no support ;)"
+
+- name: (custom - docker) remove docker when present
+  apt:
+      name: "{{ item }}"
+      state: absent
+  with_items:
+      - docker.io
+      - docker-engine
+      - containerd
+
+- name: (custom - docker) install requirements for docker-ce
+  apt:
+      name: "{{ item }}"
+      state: present
+  with_items:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+
+- name: (custom - docker) import docker-ce key
+  apt_key:
+      url: https://download.docker.com/linux/ubuntu/gpg
+      state: present
+      id: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
+
+- name: (custom - docker) add docker-ce repository
+  apt_repository:
+      repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+      state: present
+
+- name: (custom - docker) installing docker-ce
+  apt:
+      update_cache: true
+      name: docker-ce
+      state: present
